@@ -27,7 +27,12 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
 
     override val uastParent: UElement? by lz {
-        givenParent ?: convertParent()
+        try {
+            givenParent ?: convertParent()
+        }
+        catch (e: Throwable) {
+            throw Exception("exception while getting uastParent for $this(${this.javaClass})", e)
+        }
     }
 
     protected open fun getPsiParentForLazyConversion(): PsiElement? = psi?.let { psi ->
@@ -36,7 +41,13 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
 
     protected open fun convertParent(): UElement? {
         val element = this
-        val parent = getPsiParentForLazyConversion()
+        val parent = getPsiParentForLazyConversion()?.let { parent ->
+            if (psi is UastKotlinPsiVariable) {
+                TODO("UastKotlinPsiVariable: in ${this.javaClass} move this condition to that class")
+                parent.parent
+            }
+            else parent
+        }
 
         fun UElement?.checkLoop(): UElement? = this.apply {
             if (this == element) {
