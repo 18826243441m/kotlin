@@ -26,6 +26,16 @@ class KotlinUAnnotation(
     override val psi: PsiAnnotation?
         get() = ktAnnotationEntry.toLightAnnotation()
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is KotlinUAnnotation) {
+            return false
+        }
+
+        return this.ktAnnotationEntry == other.ktAnnotationEntry
+    }
+
+    override fun hashCode() = ktAnnotationEntry.hashCode()
+
     override val qualifiedName: String?
         get() = resolvedAnnotation?.fqName?.asString()
 

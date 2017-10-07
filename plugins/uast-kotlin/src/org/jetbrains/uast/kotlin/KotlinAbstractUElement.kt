@@ -38,7 +38,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
         val psi = psi
         var parent = psi?.parent ?: psi?.containingFile
 
-        val annotationEntry = (psi as? KtAnnotationEntry) ?: (psi as? KtLightAbstractAnnotation)?.kotlinOrigin as? KtAnnotationEntry
+        val annotationEntry = (this as? KotlinUAnnotation)?.ktAnnotationEntry
         if (annotationEntry != null) {
             parent = annotationEntry.parent ?: annotationEntry.containingFile
             val parentUnwrapped = KotlinConverter.unwrapElements(parent) ?: return null
